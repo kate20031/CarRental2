@@ -1,0 +1,26 @@
+{% extends "layouts/main.html" %}
+
+{% block content %}
+<div class="card form-card">
+    <h2>Create Order</h2>
+
+    <p><strong>Car:</strong> {{ car.brand }} {{ car.model }}</p>
+    <p><strong>Price per Day:</strong> {{ car.price_per_day }}</p>
+
+    {% if error %}
+        <div class="alert error">{{ error }}</div>
+    {% endif %}
+
+    <form method="post" action="/orders/create/?car_id={{ car.id }}">
+        {% csrf_token %}
+
+        <label>Rental Start Date</label>
+        <input type="date" name="rent_start" required>
+
+        <label>Rental End Date</label>
+        <input type="date" name="rent_end" required>
+
+        <button type="submit">Create Order</button>
+    </form>
+</div>
+{% endblock %}

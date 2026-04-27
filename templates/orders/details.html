@@ -1,0 +1,17 @@
+{% extends "layouts/main.html" %}
+
+{% block content %}
+<h2>Order Details #{{ order.id }}</h2>
+
+<p><strong>Car:</strong> {{ order.car.brand }} {{ order.car.model }}</p>
+<p><strong>Plate:</strong> {{ order.car.plate_number }}</p>
+<p><strong>Passport:</strong> {{ order.passport_data }}</p>
+<p><strong>Period:</strong> {{ order.rent_start }} - {{ order.rent_end }}</p>
+<p><strong>Total Amount:</strong> {{ order.total_amount }}</p>
+<p><strong>Status:</strong> {{ order.order_status }}</p>
+<p><strong>Payment:</strong> {{ order.payment_status }}</p>
+
+{% if order.rejection_reason %}
+<p><strong>Rejection Reason:</strong> {{ order.rejection_reason }}</p>
+{% endif %}
+{% endblock %}

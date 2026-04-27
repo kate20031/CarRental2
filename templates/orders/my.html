@@ -1,0 +1,91 @@
+{% extends "layouts/main.html" %}
+
+{% block content %}
+<h2>My Orders</h2>
+
+{% if orders %}
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Car</th>
+            <th>Period</th>
+            <th>Total Amount</th>
+            <th>Status</th>
+            <th>Payment</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for order in orders %}
+        <tr>
+            <td>{{ order.id }}</td>
+
+            <td>
+                {{ order.car.brand }} {{ order.car.model }}
+            </td>
+
+            <td>
+                {{ order.rent_start }} - {{ order.rent_end }}
+            </td>
+
+            <td>
+                {{ order.total_amount }} UAH
+            </td>
+
+            <td>
+                <span class="badge badge-{{ order.order_status }}">
+                    {{ order.order_status }}
+                </span>
+            </td>
+
+            <td>
+                {% if order.order_status == "rejected" %}
+                    —
+                {% else %}
+                    <span class="badge badge-{{ order.payment_status }}">
+                        {{ order.get_payment_status_display }}
+                    </span>
+                {% endif %}
+            </td>
+
+            <td>
+                <a class="btn-link" href="/orders/details/{{ order.id }}/">
+                    Details
+                </a>
+
+            <!--  RENT PAYMENT -->
+            {% if order.order_status == "approved" and order.payment_status == "unpaid" %}
+                <a class="btn btn-success"
+                   href="/orders/payment/{{ order.id }}/?type=rent">
+                    Pay for Rental
+                </a>
+            {% endif %}
+
+            <!--  REPAIR PAYMENT -->
+            {% if order.order_status == "damage_pending" %}
+                <div style="color:red;">
+                    Repair payment required
+                </div>
+
+                <a class="btn btn-danger"
+                   href="/orders/payment/{{ order.id }}/?type=repair">
+                    Pay for Repair
+                </a>
+            {% endif %}
+
+            {% if order.payment_status == "paid" and order.order_status != "rejected" %}
+                <span class="badge badge-paid">✔ Rental Paid</span>
+            {% endif %}
+        </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% else %}
+<p>You have no orders yet.</p>
+{% endif %}
+
+{% endblock %}

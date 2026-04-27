@@ -1,0 +1,43 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <title>Car Rental</title>
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+<body>
+
+<header class="topbar">
+    <div class="topbar-inner container">
+        <a href="/cars/" class="logo">Car Rental</a>
+
+        <nav>
+            {% if user.is_authenticated %}
+                <a href="/cars/">Cars</a>
+
+                {% if user.is_staff %}
+                    <a href="/orders/">Orders</a>
+                    <a href="/returns/">Returns</a>
+                {% else %}
+                    <a href="/orders/my/">My Orders</a>
+                {% endif %}
+
+                <a href="/logout/" class="logout-btn">Logout</a>
+            {% else %}
+                <a href="/login/">Login</a>
+                <a href="/register/">Register</a>
+            {% endif %}
+        </nav>
+    </div>
+</header>
+
+<main class="container">
+    {% block content %}
+    {% endblock %}
+</main>
+
+</body>
+</html>

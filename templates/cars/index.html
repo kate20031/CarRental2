@@ -1,0 +1,87 @@
+{% extends "layouts/main.html" %}
+
+{% block content %}
+<div class="card">
+    <h2>Car List</h2>
+
+    {% if user.is_staff %}
+        <p>
+            <a class="btn btn-success" href="{% url 'car_create' %}">
+                Add Car
+            </a>
+        </p>
+    {% endif %}
+
+    {% if cars %}
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Brand</th>
+                    <th>Model</th>
+                    <th>Year</th>
+                    <th>Plate</th>
+                    <th>Colour</th>
+                    <th>Price/Day</th>
+                    <th>Status</th>
+                    <th>Photo</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for car in cars %}
+                    <tr>
+                        <td>{{ car.id }}</td>
+                        <td>{{ car.brand }}</td>
+                        <td>{{ car.model }}</td>
+                        <td>{{ car.manufacture_year }}</td>
+                        <td>{{ car.plate_number }}</td>
+                        <td>{{ car.color }}</td>
+                        <td>{{ car.price_per_day }}</td>
+                        <td>{{ car.status }}</td>
+
+                        <td>
+                            {% if car.image_url %}
+                                <img src="{{ car.image_url }}" style="width: 180px; border-radius: 10px;">
+                            {% else %}
+                                None
+                            {% endif %}
+                        </td>
+
+                        <td>
+
+                            {% if user.is_staff %}
+                                <!-- ADMIN -->
+                                <a class="btn btn-success" href="{% url 'car_edit' car.id %}">
+                                    Edit
+                                </a>
+
+                                <form method="post" action="{% url 'car_delete' car.id %}" style="display:inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger">
+                                        Delete
+                                    </button>
+                                </form>
+
+                            {% else %}
+                                <!-- CLIENT -->
+                                {% if car.status == "available" %}
+                                    <a class="btn btn-primary" href="/orders/create/?car_id={{ car.id }}">
+                                        Rent
+                                    </a>
+                                {% else %}
+                                    Unavailable
+                                {% endif %}
+                            {% endif %}
+
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No cars available.</p>
+    {% endif %}
+</div>
+{% endblock %}

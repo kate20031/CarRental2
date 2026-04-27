@@ -1,0 +1,104 @@
+{% extends "layouts/main.html" %}
+
+{% block content %}
+<div class="card">
+    <h2>Order Management</h2>
+
+    {% if orders %}
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Client</th>
+                    <th>Car</th>
+                    <th>Period</th>
+                    <th>Total Amount</th>
+                    <th>Status</th>
+                    <th>Payment</th>
+                    <th>Rejection Reason</th>
+                    <th>Actions</th>
+                    <th>Repair</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for order in orders %}
+                    <tr>
+                        <td>{{ order.id }}</td>
+                        <td>{{ order.client_full_name }}</td>
+                        <td>{{ order.car.brand }} {{ order.car.model }}</td>
+                        <td>{{ order.rent_start }} - {{ order.rent_end }}</td>
+                        <td>{{ order.total_amount }}</td>
+                        <td>
+                            <span class="badge badge-{{ order.order_status }}">
+                                {{ order.get_order_status_display }}
+                            </span>
+                        </td>
+
+                        <td>
+                            {% if order.order_status == "rejected" %}
+                                —
+                            {% else %}
+                                <span class="badge badge-{{ order.payment_status }}">
+                                    {{ order.get_payment_status_display }}
+                                </span>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {% if order.rejection_reason %}
+                                {{ order.rejection_reason }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {% if order.order_status == "pending" %}
+                                <div class="action-box">
+                                    <form method="post" action="/orders/approve/{{ order.id }}/" class="inline-form">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn-success">
+                                            Approve
+                                        </button>
+                                    </form>
+
+                                    <form method="post" action="/orders/reject/{{ order.id }}/" class="inline-form">
+                                        {% csrf_token %}
+                                        <input type="text" name="rejection_reason" placeholder="Rejection reason" required>
+                                        <button type="submit" class="btn-danger">
+                                            Reject
+                                        </button>
+                                    </form>
+                                </div>
+                            {% else %}
+                                No actions
+                            {% endif %}
+                        </td>
+
+                        <td>
+                        {% if order.invoice %}
+                            {% if order.invoice.is_paid %}
+                                <span style="color: green;">✔ Paid</span>
+                            {% else %}
+                                <span style="color: red;">
+                                    ❗ Unpaid: {{ order.invoice.repair_amount }} UAH
+                                </span>
+                                <br>
+                                <small>{{ order.invoice.description }}</small>
+                            {% endif %}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+        <p>No orders yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

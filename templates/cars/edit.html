@@ -1,0 +1,64 @@
+{% extends "layouts/main.html" %}
+
+{% block title %}Edit Car{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>Edit Car</h2>
+
+    <form method="post" action="{% url 'car_edit' car.id %}">
+        {% csrf_token %}
+        <input type="hidden" name="id" value="{{ car.id }}">
+
+        <label for="brand">Brand</label>
+        <input type="text" id="brand" name="brand" value="{{ car.brand }}" required>
+
+        <label for="model">Model</label>
+        <input type="text" id="model" name="model" value="{{ car.model }}" required>
+
+        <label for="manufacture_year">Year of Manufacture</label>
+        <input type="number" id="manufacture_year" name="manufacture_year" value="{{ car.manufacture_year }}" required>
+
+        <label for="plate_number">Licence Plate</label>
+        <input type="text" id="plate_number" name="plate_number" value="{{ car.plate_number }}" required>
+
+        <label for="color">Colour</label>
+        <input type="text" id="color" name="color" value="{{ car.color }}" required>
+
+        <label for="price_per_day">Price per Day</label>
+        <input type="number" step="0.01" id="price_per_day" name="price_per_day" value="{{ car.price_per_day }}" required>
+
+        <label for="status">Status</label>
+        <select id="status" name="status" required>
+            {% if car.status == "available" %}
+                <option value="available" selected>Available</option>
+            {% else %}
+                <option value="available">Available</option>
+            {% endif %}
+
+            {% if car.status == "reserved" %}
+                <option value="reserved" selected>Reserved</option>
+            {% else %}
+                <option value="reserved">Reserved</option>
+            {% endif %}
+
+            {% if car.status == "rented" %}
+                <option value="rented" selected>Rented</option>
+            {% else %}
+                <option value="rented">Rented</option>
+            {% endif %}
+
+            {% if car.status == "maintenance" %}
+                <option value="maintenance" selected>Maintenance</option>
+            {% else %}
+                <option value="maintenance">Maintenance</option>
+            {% endif %}
+        </select>
+
+        <label for="image_url">Photo (URL)</label>
+        <input type="text" id="image_url" name="image_url" value="{{ car.image_url }}">
+
+        <button type="submit" class="btn btn-success">Update</button>
+    </form>
+</div>
+{% endblock %}
