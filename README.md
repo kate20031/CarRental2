@@ -107,12 +107,8 @@ If a car is returned with damage:
 
 ## 🖼 Screenshots
 
-Add screenshots to a folder named **screenshots/** in your repository.
-
-Example:
-
 ```markdown
-![Login](screenshots/login.png)
+[Login](screenshots/login.png)
 ![Cars](screenshots/cars.png)
 ![Orders](screenshots/orders.png)
 ![Returns](screenshots/returns.png)
