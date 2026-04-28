@@ -48,7 +48,7 @@ Password: admin12345
 
 ```text
 Username: client1
-Password: client12345
+Password: 12345
 ```
 
 ---
@@ -111,7 +111,7 @@ If a car is returned with damage:
 ![Cars](screenshots/cars.png)
 ![Orders](screenshots/orders.png)
 ![Returns](screenshots/returns.png)
-```
+
 
 ---
 
