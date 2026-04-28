@@ -1,7 +1,7 @@
 # 🚗 Car Rental System
 
-A full-stack web application for managing car rentals, built with **Django**.  
-The project supports both **admin management** and **customer booking workflows**.
+A web application for managing car rentals, built with **Django**.  
+The system supports separate workflows for **customers** and **administrators**: customers can book and pay for cars, while administrators manage cars, rental requests, returns, and repair invoices.
 
 🌐 **Live Demo:**  
 https://kp432030.pythonanywhere.com/
@@ -11,62 +11,97 @@ https://kp432030.pythonanywhere.com/
 ## ✨ Features
 
 ### 👤 Customer Side
+
 - Register and log in
 - Browse available cars
 - Create rental orders
 - View personal orders
-- Pay for rentals using simulated Google Pay
-- Pay repair fees if damage is detected
-- Track order and payment status
+- Pay for approved rentals using a simulated Google Pay page
+- View rejected orders and rejection reasons
+- Pay repair fees if vehicle damage was registered by the administrator
+- Track rental, payment, and repair statuses
 
 ### 🛠 Admin Side
-- Add, edit and delete cars
-- Manage car availability
+
+- Add new cars
+- Edit and delete cars
+- Manage car availability through order workflow
 - Approve or reject rental orders
+- Provide rejection reasons
 - Register car returns
-- Add damage reports
-- Create repair invoices
-- Track rental and repair payments
+- Mark returned cars as damaged or undamaged
+- Create repair invoices for damaged cars
+- Track paid and unpaid repair invoices
 
 ---
 
 ## 🔐 Demo Accounts
 
 ### Admin
-Username: admin1  
-Password: admin12345  
+
+```text
+Username: admin1
+Password: admin12345
+```
 
 ### Customer
-Username: client1  
-Password: client12345  
+
+```text
+Username: client1
+Password: client12345
+```
 
 ---
 
 ## 🚘 Car Statuses
 
-- Available
-- Reserved
-- Rented
-- Maintenance
+- `available` — the car can be rented
+- `reserved` — the car has an approved order but is not yet paid
+- `rented` — the rental is paid and active
+- `maintenance` — the car is not available for rental
 
 ---
 
 ## 📦 Order Workflow
 
-Pending → Approved → Active → Returned → Closed  
-↘ Rejected  
-↘ Damage Pending → Repair Paid → Closed  
+```text
+pending → approved → active → returned
+   ↘ rejected
+   ↘ damage_pending → repair paid → returned
+```
+
+### Status Meaning
+
+- `pending` — customer created an order and waits for admin approval
+- `approved` — admin approved the order; customer can pay
+- `active` — rental is paid and car is currently rented
+- `returned` — car was returned successfully
+- `rejected` — admin rejected the order and added a reason
+- `damage_pending` — car was returned with damage and customer must pay repair invoice
 
 ---
 
 ## 💳 Payments
 
 The application includes a simulated payment flow:
+
 - Rental payment
 - Repair payment
-- Google Pay-style confirmation page  
+- Google Pay-style confirmation page
 
-No real money is charged.
+No real money is charged. The payment page only imitates the payment confirmation process for educational purposes.
+
+---
+
+## 🧾 Repair Invoice Logic
+
+If a car is returned with damage:
+
+1. The administrator registers the damage.
+2. A repair invoice is created.
+3. The order receives the `damage_pending` status.
+4. The customer pays the repair invoice.
+5. After payment, the order becomes `returned` and the car becomes available again.
 
 ---
 
@@ -76,9 +111,12 @@ Add screenshots to a folder named **screenshots/** in your repository.
 
 Example:
 
+```markdown
 ![Login](screenshots/login.png)
 ![Cars](screenshots/cars.png)
 ![Orders](screenshots/orders.png)
+![Returns](screenshots/returns.png)
+```
 
 ---
 
@@ -86,9 +124,10 @@ Example:
 
 - Python
 - Django
-- SQLite
+- SQLite / PostgreSQL
 - HTML
 - CSS
+- Django Authentication
 - PythonAnywhere
 
 ---
@@ -108,15 +147,68 @@ python manage.py migrate
 python manage.py runserver
 ```
 
+Open the project locally:
+
+```text
+http://127.0.0.1:8000/
+```
+
+---
+
+## 👤 Creating an Admin User
+
+```bash
+python manage.py createsuperuser
+```
+
+After creating a superuser, log in through:
+
+```text
+http://127.0.0.1:8000/login/
+```
+
+Admin users are detected using Django's built-in `is_staff` field.
+
 ---
 
 ## 🌐 Deployment
 
-Live: https://kp432030.pythonanywhere.com/
+Live version:
+
+https://kp432030.pythonanywhere.com/
+
+The project is deployed on **PythonAnywhere**.
+
+---
+
+## 📁 Main Project Structure
+
+```text
+CarRental2/
+├── accounts/
+│   ├── models.py
+│   └── views.py
+├── cars/
+│   ├── models.py
+│   └── views.py
+├── orders/
+│   ├── models.py
+│   └── views.py
+├── templates/
+│   ├── layouts/
+│   ├── cars/
+│   └── orders/
+├── static/
+│   └── style.css
+├── config/
+│   ├── settings.py
+│   └── urls.py
+└── manage.py
+```
 
 ---
 
 ## 👩‍💻 Author
 
-Kate Pavlichenko  
-https://github.com/kate20031
+**Kate Pavlichenko**  
+GitHub: https://github.com/kate20031
