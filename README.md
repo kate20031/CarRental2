@@ -58,7 +58,6 @@ Password: 12345
 - `available` — the car can be rented
 - `reserved` — the car has an approved order but is not yet paid
 - `rented` — the rental is paid and active
-- `maintenance` — the car is not available for rental
 
 ---
 
