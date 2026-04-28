@@ -107,7 +107,6 @@ If a car is returned with damage:
 
 ## 🖼 Screenshots
 
-```markdown
 ![Login](screenshots/login.png)
 ![Cars](screenshots/cars.png)
 ![Orders](screenshots/orders.png)
