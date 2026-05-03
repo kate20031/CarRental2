@@ -1,9 +1,11 @@
 from django.contrib import admin
 from django.urls import path
 from django.shortcuts import redirect
+from django.urls import path, include
 from orders.views import payment_page
 from cars.views import cars_page, car_create_page, car_edit_page, car_delete
 from cars.views import cars_page
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from accounts.views import login_view, register_view, logout_view
 from orders.views import (
     order_create_page,
@@ -51,4 +53,9 @@ urlpatterns = [
 
     path("returns/", returns_page, name="returns"),
     path("returns/<int:order_id>/", return_order, name="return_order"),
+
+    path("api/cars/", include("cars.api_urls")),
+    path("api/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
+    path("api/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
+    path("api/orders/", include("orders.api_urls")),
 ]
