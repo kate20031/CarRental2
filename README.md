@@ -47,7 +47,7 @@ Password: admin12345
 ### Customer
 
 ```text
-Username: client1
+Username: client5
 Password: 12345
 ```
 
