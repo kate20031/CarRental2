@@ -40,7 +40,7 @@ https://kp432030.pythonanywhere.com/
 ### Admin
 
 ```text
-Username: admin1
+Username: admin2
 Password: admin12345
 ```
 
