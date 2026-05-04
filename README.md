@@ -250,17 +250,23 @@ The project uses object-oriented programming through Django and Django REST Fram
 
 ##  Logging
 
-The project can be extended with Django logging for important business actions such as:
+The project uses Python logging for important business actions.
+
+Logged events include:
 
 - order creation
-- order approval
-- order rejection
+- order approval by administrator
+- order rejection with reason
 - rental payment
-- car return
+- car return without damage
+- damage registration
 - repair invoice creation
 - repair payment
 
-Recommended logging configuration can be added to `settings.py` using Python's built-in `logging` module.
+Logs are written both to the console and to a log file:
+
+```text
+logs/app.log
 
 ---
 
