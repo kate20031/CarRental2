@@ -10,6 +10,9 @@ from cars.models import Car
 from .models import Order, DamageInvoice
 from .serializers import OrderSerializer, DamageInvoiceSerializer
 
+import logging
+
+logger = logging.getLogger(__name__)
 
 @api_view(["GET", "POST"])
 @permission_classes([permissions.IsAuthenticated])
@@ -87,6 +90,11 @@ def orders_api(request):
             total_amount=total,
         )
 
+        logger.info(
+            f"Order {order.id} created by user {request.user.username} "
+            f"for car {car.id} from {start_date} to {end_date}"
+        )
+
         serializer = OrderSerializer(order)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -121,6 +129,10 @@ def approve_order_api(request, order_id):
     order.car.save()
     order.save()
 
+    logger.info(
+        f"Order {order.id} approved by admin {request.user.username}"
+    )
+
     return Response(OrderSerializer(order).data)
 
 
@@ -154,6 +166,11 @@ def reject_order_api(request, order_id):
     order.car.save()
     order.save()
 
+    logger.warning(
+        f"Order {order.id} rejected by admin {request.user.username}. "
+        f"Reason: {reason}"
+    )
+
     return Response(OrderSerializer(order).data)
 
 
@@ -182,6 +199,11 @@ def pay_order_api(request, order_id):
         order.car.save()
         order.save()
 
+        logger.info(
+            f"Rent payment completed for order {order.id} "
+            f"by user {request.user.username}"
+        )
+
         return Response({
             "message": "Оренду оплачено",
             "order": OrderSerializer(order).data
@@ -203,6 +225,11 @@ def pay_order_api(request, order_id):
         order.car.status = "available"
         order.car.save()
         order.save()
+
+        logger.info(
+            f"Repair payment completed for order {order.id} "
+            f"by user {request.user.username}"
+        )
 
         return Response({
             "message": "Ремонт оплачено",
@@ -288,6 +315,11 @@ def return_order_api(request, order_id):
         order.order_status = "damage_pending"
         order.save()
 
+        logger.warning(
+            f"Damage registered for order {order.id} by admin {request.user.username}. "
+            f"Invoice {invoice.id}, amount {repair_amount}"
+        )
+
         return Response({
             "message": "Повернення з пошкодженням зареєстровано",
             "order": OrderSerializer(order).data,
@@ -298,6 +330,11 @@ def return_order_api(request, order_id):
     order.car.status = "available"
     order.car.save()
     order.save()
+
+    logger.info(
+        f"Return without damage registered for order {order.id} "
+        f"by admin {request.user.username}"
+    )
 
     return Response({
         "message": "Повернення без пошкоджень зареєстровано",

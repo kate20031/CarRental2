@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-(1ii50ok-8&4cun=kgj4*e)m#i@_ekd1@_8&7m%^powf*m^z^%
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["127.0.0.1", "localhost", "kp432030.pythonanywhere.com"]
 
 
 # Application definition
@@ -34,6 +34,36 @@ ALLOWED_HOSTS = []
 LOGIN_URL = "/login/"
 LOGIN_REDIRECT_URL = "/cars/"
 LOGOUT_REDIRECT_URL = "/login/"
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+
+    "formatters": {
+        "standard": {
+            "format": "[{asctime}] {levelname} {name}: {message}",
+            "style": "{",
+        },
+    },
+
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "standard",
+        },
+        "file": {
+            "class": "logging.FileHandler",
+            "filename": BASE_DIR / "logs" / "app.log",
+            "formatter": "standard",
+            "encoding": "utf-8",
+        },
+    },
+
+    "root": {
+        "handlers": ["console", "file"],
+        "level": "INFO",
+    },
+}
 
 
 INSTALLED_APPS = [
