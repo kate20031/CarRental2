@@ -150,10 +150,10 @@ def payment_page(request, order_id):
     })
 
 
+
 @user_passes_test(lambda u: u.is_staff)
 def returns_page(request):
-    orders = Order.objects.filter(order_status="active").order_by("-id")
-    return render(request, "orders/returns.html", {"orders": orders})
+    return render(request, "orders/returns.html")
 
 
 @user_passes_test(lambda u: u.is_staff)
