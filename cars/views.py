@@ -5,8 +5,7 @@ from .models import Car
 
 @login_required
 def cars_page(request):
-    cars = Car.objects.all()
-    return render(request, "cars/index.html", {"cars": cars})
+    return render(request, "cars/index.html")
 
 
 @user_passes_test(lambda u: u.is_staff)

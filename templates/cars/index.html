@@ -12,76 +12,135 @@
         </p>
     {% endif %}
 
-    {% if cars %}
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Brand</th>
-                    <th>Model</th>
-                    <th>Year</th>
-                    <th>Plate</th>
-                    <th>Colour</th>
-                    <th>Price/Day</th>
-                    <th>Status</th>
-                    <th>Photo</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Brand</th>
+                <th>Model</th>
+                <th>Year</th>
+                <th>Plate</th>
+                <th>Colour</th>
+                <th>Price/Day</th>
+                <th>Status</th>
+                <th>Photo</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
 
-            <tbody>
-                {% for car in cars %}
-                    <tr>
-                        <td>{{ car.id }}</td>
-                        <td>{{ car.brand }}</td>
-                        <td>{{ car.model }}</td>
-                        <td>{{ car.manufacture_year }}</td>
-                        <td>{{ car.plate_number }}</td>
-                        <td>{{ car.color }}</td>
-                        <td>{{ car.price_per_day }}</td>
-                        <td>{{ car.status }}</td>
-
-                        <td>
-                            {% if car.image_url %}
-                                <img src="{{ car.image_url }}" style="width: 180px; border-radius: 10px;">
-                            {% else %}
-                                None
-                            {% endif %}
-                        </td>
-
-                        <td>
-
-                            {% if user.is_staff %}
-                                <!-- ADMIN -->
-                                <a class="btn btn-success" href="{% url 'car_edit' car.id %}">
-                                    Edit
-                                </a>
-
-                                <form method="post" action="{% url 'car_delete' car.id %}" style="display:inline;">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn btn-danger">
-                                        Delete
-                                    </button>
-                                </form>
-
-                            {% else %}
-                                <!-- CLIENT -->
-                                {% if car.status == "available" %}
-                                    <a class="btn btn-primary" href="/orders/create/?car_id={{ car.id }}">
-                                        Rent
-                                    </a>
-                                {% else %}
-                                    Unavailable
-                                {% endif %}
-                            {% endif %}
-
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p>No cars available.</p>
-    {% endif %}
+        <tbody id="carsTable">
+            <tr>
+                <td colspan="10">Loading cars...</td>
+            </tr>
+        </tbody>
+    </table>
 </div>
+
+<script>
+async function loadCars() {
+    const token = localStorage.getItem("access");
+    const tableBody = document.getElementById("carsTable");
+
+    if (!token) {
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="10">
+                    No JWT token found. Please log in through the API login flow.
+                </td>
+            </tr>
+        `;
+        return;
+    }
+
+    const response = await fetch("/api/cars/", {
+        method: "GET",
+        headers: {
+            "Authorization": "Bearer " + token
+        }
+    });
+
+    if (response.status === 401) {
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="10">
+                    API authentication failed. Please log in again.
+                </td>
+            </tr>
+        `;
+        return;
+    }
+
+    const cars = await response.json();
+    tableBody.innerHTML = "";
+
+    if (cars.length === 0) {
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="10">No cars available.</td>
+            </tr>
+        `;
+        return;
+    }
+
+    const isStaff = "{{ user.is_staff|yesno:'true,false' }}" === "true";
+
+    cars.forEach(car => {
+        let photo = "None";
+
+        if (car.image_url) {
+            photo = `<img src="${car.image_url}" style="width: 120px; border-radius: 10px;">`;
+        }
+
+        let actions = "";
+
+        if (isStaff) {
+            actions = `
+                <a class="btn btn-success" href="/cars/edit/${car.id}/">
+                    Edit
+                </a>
+
+                <form method="post" action="/cars/delete/${car.id}/" style="display:inline;">
+                    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+                    <button type="submit" class="btn btn-danger">
+                        Delete
+                    </button>
+                </form>
+            `;
+        } else {
+            if (car.status === "available") {
+                actions = `
+                    <a class="btn btn-primary" href="/orders/create/?car_id=${car.id}">
+                        Rent
+                    </a>
+                `;
+            } else {
+                actions = "Unavailable";
+            }
+        }
+
+        const row = document.createElement("tr");
+
+        row.innerHTML = `
+            <td>${car.id}</td>
+            <td>${car.brand}</td>
+            <td>${car.model}</td>
+            <td>${car.manufacture_year}</td>
+            <td>${car.plate_number}</td>
+            <td>${car.color}</td>
+            <td>${car.price_per_day}</td>
+            <td>
+                <span class="badge badge-${car.status}">
+                    ${car.status}
+                </span>
+            </td>
+            <td>${photo}</td>
+            <td>${actions}</td>
+        `;
+
+        tableBody.appendChild(row);
+    });
+}
+
+loadCars();
+</script>
 {% endblock %}

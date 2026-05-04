@@ -103,15 +103,7 @@ def pay_order(request, order_id):
 
 @user_passes_test(lambda u: u.is_staff)
 def admin_orders(request):
-    orders = Order.objects.all().order_by("-id")
-
-    for order in orders:
-        try:
-            order.invoice = DamageInvoice.objects.get(order=order)
-        except DamageInvoice.DoesNotExist:
-            order.invoice = None
-
-    return render(request, "orders/admin_list.html", {"orders": orders})
+    return render(request, "orders/admin_list.html")
 
 @user_passes_test(lambda u: u.is_staff)
 def approve_order(request, order_id):
